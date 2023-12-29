@@ -5,32 +5,35 @@ const gameBoard = (function (){
   const columns = 3;
   const board = [];
 
-  const createCell = () => {
-    return {}
-  };
-
-  const displayBoard = () => {
-    for (let i = 0; i < rows; i++){
+  const initBoard = function () {
+    for (let i = 0; i < rows; i++) {
       board[i] = [];
-      for (let j = 0; j < columns; j++){
-        board[i].push(createCell());
+      for (let j = 0; j < columns; j++) {
+        board[i].push(`${[i]},${[j]}`);
       }
     }
-  };
+    return board;
+  }
 
   return {
-    displayBoard: displayBoard,
-    getboard: () => board
+    initBoard,
+    getBoard: () => board
   };
 
 })();
 
-gameBoard.displayBoard();
+///////////////////////////////////////
+function playGame() {
+  playRound()
+}
 
-const table = gameBoard.getboard();
-console.log(table);
-// 
+function playRound(){
+  gameBoard.initBoard()
+  console.log(gameBoard.getBoard())
+}
 
+playGame()
+///////////////////////////////////////
 
 function createPlayer (name) {
   let score = 0;
