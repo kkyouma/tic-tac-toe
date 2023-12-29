@@ -6,6 +6,7 @@ const gameBoard = (function (){
   const board = [];
 
   const createCell = () => {
+    return {}
   };
 
   const displayBoard = () => {
@@ -28,3 +29,20 @@ gameBoard.displayBoard();
 
 const table = gameBoard.getboard();
 console.log(table);
+// 
+
+
+function createPlayer (name) {
+  let score = 0;
+  let level = 0;
+
+  const addScore = () => score++
+  const addLevel = () => level++
+
+  const displayName = () => console.log(name) 
+  const displayScore = () => console.log(score)
+  const displayLevel = () => console.log(level)
+
+  return {name, addScore, addLevel, displayName, displayLevel, displayScore}
+}
+const player1 = createPlayer("player1")
