@@ -36,29 +36,42 @@ function updateCell(){
 ///////////////////////////////////////
 function gameController(){
 
-  function createPlayer (name) {
+  const createPlayer = function (name) {
     let score = 0;
+    let token = "o"
   
     const addScore = () => score++
-    const tokenSelection = (token = "x") => token
   
-    console.log({name}) 
+    console.log({name, token}) 
   
-    return {name, addScore, tokenSelection}
+    return {name, addScore, token}
   }
 
-  
-  // function playRound(){
-    // }
-    
-    // const toggleTurnPlayer = player
+  const players = [
+    { name: "P1",
+      token: "x"
+    }, {
+      name: "P2",
+      token: "o"
+    }
+  ];
 
-    return {createPlayer}
+  let activePlayer = players[0] 
+
+  const toggleTurnPlayer = () => {
+    activePlayer = activePlayer === players[0] ? players[1] : players[0];
+  }
+  
+  function playRound(){
+    
+  }
+
+  return {createPlayer, playRound}
 }
 
 const game = gameController()
 
-const player1 = game.createPlayer("player1")
-const player2 = game.createPlayer("player2")
+// const player1 = game.createPlayer("player1")
+// const player2 = game.createPlayer("player2")
 
 
