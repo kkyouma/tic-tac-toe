@@ -5,47 +5,60 @@ const gameBoard = (function (){
   const columns = 3;
   const board = [];
 
-  const initBoard = function () {
-    for (let i = 0; i < rows; i++) {
-      board[i] = [];
-      for (let j = 0; j < columns; j++) {
-        board[i].push(`${[i]},${[j]}`);
-      }
+  for (let i = 0; i < rows; i++) {
+    board[i] = [];
+    for (let j = 0; j < columns; j++) {
+      board[i].push(updateCell());
     }
-    return board;
   }
+    
+  const getBoard = () => board;
 
-  return {
-    initBoard,
-    getBoard: () => board
-  };
+  // const validCells = board.filter(row => )
 
+  console.log(getBoard())
+
+  return {getBoard}
 })();
 
+function updateCell(){
+  let value = 0
+
+  const addToken = (player) => {
+    value = player.symbol;
+  }
+
+  const getValue = () => value;
+
+  return {addToken, getValue};
+}
+
 ///////////////////////////////////////
-function playGame() {
-  playRound()
+function gameController(){
+
+  function createPlayer (name) {
+    let score = 0;
+  
+    const addScore = () => score++
+    const tokenSelection = (token = "x") => token
+  
+    console.log({name}) 
+  
+    return {name, addScore, tokenSelection}
+  }
+
+  
+  // function playRound(){
+    // }
+    
+    // const toggleTurnPlayer = player
+
+    return {createPlayer}
 }
 
-function playRound(){
-  gameBoard.initBoard()
-  console.log(gameBoard.getBoard())
-}
+const game = gameController()
 
-playGame()
-///////////////////////////////////////
+const player1 = game.createPlayer("player1")
+const player2 = game.createPlayer("player2")
 
-function createPlayer (name) {
-  let score = 0;
-  let level = 0;
 
-  const addScore = () => score++
-  const addLevel = () => level++
-
-  const displayName = () => console.log(name) 
-  const displayScore = () => console.log(score)
-  const displayLevel = () => console.log(level)
-
-  return {name, addScore, addLevel, displayName, displayLevel, displayScore}
-}
-const player1 = createPlayer("player1")
