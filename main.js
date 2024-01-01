@@ -1,6 +1,6 @@
 "use strict";
 
-const gameBoard = (function (){
+function GameBoard (){
   const rows = 3;
   const columns = 3;
   const board = [];
@@ -8,44 +8,47 @@ const gameBoard = (function (){
   for (let i = 0; i < rows; i++) {
     board[i] = [];
     for (let j = 0; j < columns; j++) {
-      board[i].push(updateCell());
+      board[i].push(cell.getValue());
     }
   }
-    
   const getBoard = () => board;
 
-  // const validCells = board.filter(row => )
+  const dropToken = (player, column) => {
+    const validCells = board.filter(row => row[column].getValue() === 0).map(row => row[column])
 
-  console.log(getBoard())
+    if (!validCells.length) {
+      return
+    } else {
+      
+    }
 
-  return {getBoard}
-})();
+    
+  }
+  
+  const printBoard = () => console.log(getBoard())
 
-function updateCell(){
+  return {getBoard, dropToken, printBoard}
+};
+
+
+
+function Cell(){
   let value = 0
 
   const addToken = (player) => {
-    value = player.symbol;
+    value = player.token;
   }
 
   const getValue = () => value;
 
   return {addToken, getValue};
 }
+const cell = Cell()
 
-///////////////////////////////////////
-function gameController(){
 
-  const createPlayer = function (name) {
-    let score = 0;
-    let token = "o"
-  
-    const addScore = () => score++
-  
-    console.log({name, token}) 
-  
-    return {name, addScore, token}
-  }
+function GameController(){
+
+  const board = GameBoard();
 
   const players = [
     { name: "P1",
@@ -61,17 +64,25 @@ function gameController(){
   const toggleTurnPlayer = () => {
     activePlayer = activePlayer === players[0] ? players[1] : players[0];
   }
+
+  const getActivePlayer = () => activePlayer
   
+  let round = 0
   function playRound(){
+    round++
+
+
+    toggleTurnPlayer()
+    board.printBoard()
     
+    console.log(`ronda: ${round}`)
   }
 
-  return {createPlayer, playRound}
+  return {playRound, getActivePlayer, players}
 }
+const game = GameController()
 
-const game = gameController()
-
-// const player1 = game.createPlayer("player1")
-// const player2 = game.createPlayer("player2")
+const player1 = game.players[0]
+const player2 = game.players[1]
 
 
