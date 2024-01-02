@@ -1,4 +1,116 @@
+@font-face {
+  font-family: 'Roboto';
+  src: url(/fonts/Roboto-Regular.ttf) format('truetype');
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+  --bg-color: #030712;
+  --bg-color2: #111827;
+  --bg-color3: #1f2937;
+  --bg-color4: #374151;
+  --sidebar-bg-color: #111827;
+  --sidebar-color: #f9fafb;
+  --color1: #4b5563;
+  --color2: #6b7280;
+  --color3: #9ca3af;
+  --color4: #d1d5db;
+  --color5: #e5e7eb;
+  --color6: #f3f4f6;
+  --color7: #22d3ee;
+  --text-color: #f9fafb;
+  }
+}
+
+:root.light {
+  --bg-color: #f3f4f6;
+  --bg-color2: #e5e7eb;
+  --bg-color3: #f9fafb;
+  --bg-color4: #d1d5db;
+  --sidebar-bg-color: #111827;
+  --sidebar-color: #f9fafb;
+  --color1: #9ca3af;
+  --color2: #6b7280;
+  --color3: #4b5563;
+  --color4: #374151;
+  --color5: #1f2937;
+  --color6: #111827;
+  --color7: #22d3ee;
+  --text-color: #030712;
+}
+
+
 body {
-  background-color: black;
-  color: aliceblue;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  background-color: var(--bg-color);
+  font-family: 'Roboto', system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+#game-container {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 5px;
+  background-color: var(--bg-color3);
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  transition: background-color 0.3s ease;
+}
+
+.cell:hover {
+  background-color: #f0f0f0;
+}
+
+#buttons-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+button {
+  font-size: 16px;
+  padding: 10px 20px;
+  margin: 0 10px;
+  cursor: pointer;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+#score-container {
+  margin-top: 20px;
+  text-align: center;
+  color: var(--color4);
 }
