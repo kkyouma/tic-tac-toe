@@ -56,12 +56,8 @@ const cell = Cell();
 function GameController(){
   const board = GameBoard();
   const players = [
-    { name: "P1",
-      token: "x"
-    }, {
-      name: "P2",
-      token: "o"
-    }
+    { name: "P1", token: "x" },
+    { name: "P2", token: "o" }
   ];
   let activePlayer = players[0];
 
@@ -71,18 +67,40 @@ function GameController(){
 
   const getActivePlayer = () => activePlayer;
 
-  function evaluateWinCondition() {
-    if (board.getBoard()[i] === board.getBoard()[i] === board.getBoard()[i]) {
+  function checkLine (line) {
+    return line.every(cell => cell === line[0] && cell !== 0);
+  }
 
+  function evaluateWinCondition() {
+    const currentBoard = board.getBoard()
+
+    //rows
+    for (let i = 0; i < currentBoard.length; i++) {
+      if (checkLine(currentBoard[i])) {
+        return true
+      }
     }
-    return {hasWinner: false, 
-            }
+
+    // columns
+    for (let j = 0; j < currentBoard.length; j++) {
+      if (checkLine(currentBoard[0][i], currentBoard[1][i], currentBoard[2][i])) {
+        return true
+      }
+    }
+
+    if (checkLine(currentBoard[0][0], currentBoard[1][1], currentBoard[2][2]) ||
+        checkLine(currentBoard[0][2], currentBoard[1][1], currentBoard[2][0])) {
+      return true
+    }
+    
+
   }
 
   
   let initRound = 0;
   function playRound(){
     const hasWinner = evaluateWinCondition()
+    const hasDraw = 
     let round = initRound
     
     if (hasWinner) {
@@ -104,10 +122,10 @@ function GameController(){
       board.printBoard();
       playRound()
   
+    }
   }
-
-
-
   return {playRound, getActivePlayer}
 }
+
+
 const game = GameController();
