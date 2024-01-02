@@ -13,11 +13,14 @@ function GameBoard (){
   }
   const getBoard = () => board;
 
-  const dropToken = (value, column, row) => {
+  const dropToken = (player) => {
+
+    const {value, column, row} = player;
+
     const validCell = board[column][row] === 0;
 
     if (!validCell) {
-      return console.log("No valid cell")
+      console.log("No valid cell")
     } else {
       board[column][row] = value;
     }
@@ -38,8 +41,7 @@ function Cell(){
   const addToken = (player) => {
     value = player.token;
 
-    let column = prompt("column", [0])
-    let row = prompt("row", [0])
+    let {row, column} = player
 
     return {value, column, row}
   }
@@ -48,13 +50,11 @@ function Cell(){
 
   return {addToken, getValue};
 }
-const cell = Cell()
+const cell = Cell();
 
 
 function GameController(){
-
   const board = GameBoard();
-
   const players = [
     { name: "P1",
       token: "x"
@@ -63,31 +63,51 @@ function GameController(){
       token: "o"
     }
   ];
-
-  let activePlayer = players[0] 
+  let activePlayer = players[0];
 
   const toggleTurnPlayer = () => {
     activePlayer = activePlayer === players[0] ? players[1] : players[0];
+  };
+
+  const getActivePlayer = () => activePlayer;
+
+  function evaluateWinCondition() {
+    if (board.getBoard()[i] === board.getBoard()[i] === board.getBoard()[i]) {
+
+    }
+    return {hasWinner: false, 
+            }
   }
 
-  const getActivePlayer = () => activePlayer
   
-  let round = 0
+  let initRound = 0;
   function playRound(){
-    round++
-    let playerSelection = cell.addToken(activePlayer);
+    const hasWinner = evaluateWinCondition()
+    let round = initRound
     
-    board.dropToken(activePlayer.value, playerSelection.column, playerSelection.row)
+    if (hasWinner) {
+      round = initRound
+      return console.log(`The winner is ${activePlayer.name}`)
+
+    } else if (hasDraw) {
+      round = initRound
+      return console.log(`The winner is ${activePlayer.name}`)
+
+    } else if (!hasWinner){
+      round++
+      console.log({round, activePlayer});
+      const playerSelection = cell.addToken(activePlayer);
     
-    toggleTurnPlayer()
-    board.printBoard()
-    
-    console.log(`ronda: ${round}`)
+      board.dropToken(playerSelection);
+      
+      toggleTurnPlayer();
+      board.printBoard();
+      playRound()
+  
   }
 
-  return {playRound, getActivePlayer, players}
-}
-const game = GameController()
 
-const player1 = game.players[0]
-const player2 = game.players[1]
+
+  return {playRound, getActivePlayer}
+}
+const game = GameController();
