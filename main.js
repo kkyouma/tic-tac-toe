@@ -14,18 +14,14 @@ function GameBoard (){
   const getBoard = () => board;
 
   const dropToken = (player) => {
-
     const {value, column, row} = player;
-
-    const validCell = board[column][row] === 0;
+    const validCell = board[row][column] === 0;
 
     if (!validCell) {
       console.log("No valid cell")
     } else {
-      board[column][row] = value;
+      board[row][column] = value;
     }
-
-    
   }
   
   const printBoard = () => console.log(getBoard())
@@ -41,7 +37,7 @@ function Cell(){
   const addToken = (player) => {
     value = player.token;
 
-    let {row, column} = player
+    let {row, column} = player;
 
     return {value, column, row}
   }
@@ -68,12 +64,16 @@ function GameController(){
   const getActivePlayer = () => activePlayer;
 
   function checkLine (line) {
-    return line.every(cell => cell === line[0] && cell !== 0);
+    return line.every((cell) => cell === line[0] && cell !== 0);
   }
 
-  function evaluateWinCondition() {
-    const currentBoard = board.getBoard()
+  function checkTie () {
+    const currentBoard = board.getBoard();
+      return currentBoard.every(row => row.every(cell => cell !== 0));
+  }
 
+
+  function evaluateWinCondition(currentBoard) {
     //rows
     for (let i = 0; i < currentBoard.length; i++) {
       if (checkLine(currentBoard[i])) {
@@ -83,45 +83,74 @@ function GameController(){
 
     // columns
     for (let j = 0; j < currentBoard.length; j++) {
-      if (checkLine(currentBoard[0][i], currentBoard[1][i], currentBoard[2][i])) {
+      if (checkLine([currentBoard[0][j], currentBoard[1][j], currentBoard[2][j]])) {
         return true
       }
     }
-
-    if (checkLine(currentBoard[0][0], currentBoard[1][1], currentBoard[2][2]) ||
-        checkLine(currentBoard[0][2], currentBoard[1][1], currentBoard[2][0])) {
+    // diagonals
+    if (checkLine([currentBoard[0][0], currentBoard[1][1], currentBoard[2][2]]) ||
+        checkLine([currentBoard[0][2], currentBoard[1][1], currentBoard[2][0]])) {
       return true
     }
-    
 
+    return false
   }
 
-  
-  let initRound = 0;
+
+  let round = 0;
   function playRound(){
-    const hasWinner = evaluateWinCondition()
-    const hasDraw = 
-    let round = initRound
-    
+
+    const currentBoard = board.getBoard()
+    const hasWinner = evaluateWinCondition(currentBoard);
+    const hasDraw = checkTie(currentBoard);
+
     if (hasWinner) {
-      round = initRound
-      return console.log(`The winner is ${activePlayer.name}`)
+      console.log(`The winner is ${activePlayer.name}`)
+      return
 
     } else if (hasDraw) {
-      round = initRound
-      return console.log(`The winner is ${activePlayer.name}`)
+      console.log('The game is a Tie')
+      return
+    }
 
-    } else if (!hasWinner){
-      round++
-      console.log({round, activePlayer});
-      const playerSelection = cell.addToken(activePlayer);
+    console.log(`Turn: ${round + 1}`)
+    console.log(`Current player: ${activePlayer.name}`)
+    board.printBoard();
+
+    function pickCell (){
+      const rowInput = prompt(`Select the row (0, 1, 2) for ${activePlayer.name}`);
+      const columnInput = prompt(`Select the column (0, 1, 2) for ${activePlayer.name}`, 1);
+
+      if (rowInput.toLowerCase() === "exit" || columnInput.toLowerCase() === "exit") {
+        console.log("Exit from the game")
+        return null;
+      }
+      
+      const row = Number.parseInt(rowInput)
+      const column = Number.parseInt(columnInput)
+
+      if (Number.isNaN(row) || Number.isNaN(column) || 0 > row || row >= 3 || 0 > column || column >= 3 || currentBoard[row][column] !== 0) {
+        console.log("Invalid movement. Try again.");
+        return pickCell();
+      }
+
+
+      return {row, column}
+    }
     
+    if (pickCell() !== null) {
+      const {row, column} = pickCell()
+
+      const playerSelection = {
+        value: activePlayer.token,
+        row: row,
+        column: column,
+      }
+      
       board.dropToken(playerSelection);
       
       toggleTurnPlayer();
-      board.printBoard();
-      playRound()
-  
+      playRound();
     }
   }
   return {playRound, getActivePlayer}
