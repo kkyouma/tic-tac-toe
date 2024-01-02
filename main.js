@@ -13,13 +13,13 @@ function GameBoard (){
   }
   const getBoard = () => board;
 
-  const dropToken = (player, column) => {
-    const validCells = board.filter(row => row[column].getValue() === 0).map(row => row[column])
+  const dropToken = (value, column, row) => {
+    const validCell = board[column][row] === 0;
 
-    if (!validCells.length) {
-      return
+    if (!validCell) {
+      return console.log("No valid cell")
     } else {
-      
+      board[column][row] = value;
     }
 
     
@@ -37,8 +37,13 @@ function Cell(){
 
   const addToken = (player) => {
     value = player.token;
-  }
 
+    let column = prompt("column", [0])
+    let row = prompt("row", [0])
+
+    return {value, column, row}
+  }
+  
   const getValue = () => value;
 
   return {addToken, getValue};
@@ -70,8 +75,10 @@ function GameController(){
   let round = 0
   function playRound(){
     round++
-
-
+    let playerSelection = cell.addToken(activePlayer);
+    
+    board.dropToken(activePlayer.value, playerSelection.column, playerSelection.row)
+    
     toggleTurnPlayer()
     board.printBoard()
     
@@ -84,5 +91,3 @@ const game = GameController()
 
 const player1 = game.players[0]
 const player2 = game.players[1]
-
-
