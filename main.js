@@ -52,8 +52,8 @@ const cell = Cell();
 function GameController(){
   const board = GameBoard();
   const players = [
-    { name: "P1", token: "x" },
-    { name: "P2", token: "o" }
+    { name: "P1", token: "x", score: 0},
+    { name: "P2", token: "o", score: 0}
   ];
   let activePlayer = players[0];
 
@@ -98,48 +98,27 @@ function GameController(){
 
 
   let round = 0;
-  function playRound(){
+  function playRound(cell){
 
     const currentBoard = board.getBoard()
     const hasWinner = evaluateWinCondition(currentBoard);
     const hasDraw = checkTie(currentBoard);
 
     if (hasWinner) {
-      console.log(`The winner is ${activePlayer.name}`)
+      console.log(`The winner is ${activePlayer.name}`);
       return
 
     } else if (hasDraw) {
-      console.log('The game is a Tie')
+      console.log('The game is a Tie');
       return
     }
 
     console.log(`Turn: ${round + 1}`)
     console.log(`Current player: ${activePlayer.name}`)
     board.printBoard();
-
-    function pickCell (){
-      const rowInput = prompt(`Select the row (0, 1, 2) for ${activePlayer.name}`);
-      const columnInput = prompt(`Select the column (0, 1, 2) for ${activePlayer.name}`, 1);
-
-      if (rowInput.toLowerCase() === "exit" || columnInput.toLowerCase() === "exit") {
-        console.log("Exit from the game")
-        return null;
-      }
-      
-      const row = Number.parseInt(rowInput)
-      const column = Number.parseInt(columnInput)
-
-      if (Number.isNaN(row) || Number.isNaN(column) || 0 > row || row >= 3 || 0 > column || column >= 3 || currentBoard[row][column] !== 0) {
-        console.log("Invalid movement. Try again.");
-        return pickCell();
-      }
-
-
-      return {row, column}
-    }
     
-    if (pickCell() !== null) {
-      const {row, column} = pickCell()
+    if (cell) {
+      const {row, column} = cell
 
       const playerSelection = {
         value: activePlayer.token,
@@ -148,13 +127,53 @@ function GameController(){
       }
       
       board.dropToken(playerSelection);
-      
+
+            
       toggleTurnPlayer();
-      playRound();
     }
   }
-  return {playRound, getActivePlayer}
+  return {playRound, getActivePlayer, getBoard: board.getBoard }
 }
 
+function ScreenController () {
+  const boardContainer = document.getElementById('game-container');
+  const startBtn = document.getElementById('new-game');
+  const player1Score = document.getElementById('player1-score');
+  const player2Score = document.getElementById('player2-score');
+  const game = GameController()
 
-const game = GameController();
+  function handleCellClick (e) {
+    const row = e.target.dataset.row;
+    const column = e.target.dataset.column;
+
+    const selectedCell = {
+      row: parseInt(row),
+      column: parseInt(column),
+    };
+
+    game.playRound(selectedCell)
+  }
+
+  function renderBoard() {
+    boardContainer.textContent = '';
+
+    const board = game.getBoard();
+    const activePlayer = game.getActivePlayer();
+
+    board.forEach((row, rowIndex) => {
+      row.forEach ((cell, columnIndex) => {
+        const cellButton = document.createElement('button');
+        cellButton.classList.add('cell');
+        cellButton.dataset.row = rowIndex;
+        cellButton.dataset.column = columnIndex;
+        cellButton.textContent = cell;
+        
+
+        boardContainer.appendChild(cellButton);
+        cellButton.addEventListener('click', handleCellClick);
+      });
+    });
+  }
+  renderBoard()
+}
+ScreenController()
