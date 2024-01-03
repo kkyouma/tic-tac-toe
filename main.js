@@ -18,7 +18,7 @@ function GameBoard (){
     const validCell = board[row][column] === 0;
 
     if (!validCell) {
-      console.log("No valid cell")
+      throw new Error("No valid cell")
     } else {
       board[row][column] = value;
     }
@@ -34,17 +34,14 @@ function GameBoard (){
 function Cell(){
   let value = 0
 
-  const addToken = (player) => {
+  const setValue = (player) => {
     value = player.token;
-
-    let {row, column} = player;
-
-    return {value, column, row}
+    return {value}
   }
   
   const getValue = () => value;
 
-  return {addToken, getValue};
+  return {setValue, getValue};
 }
 const cell = Cell();
 
@@ -53,7 +50,7 @@ function GameController(){
   const board = GameBoard();
   const players = [
     { name: "P1", token: "x", score: 0},
-    { name: "P2", token: "o", score: 0}
+    { name: "P2", token: "o", score: 0},
   ];
   let activePlayer = players[0];
 
@@ -73,7 +70,7 @@ function GameController(){
   }
 
 
-  function evaluateWinCondition(currentBoard) {
+  function checkWin(currentBoard) {
     //rows
     for (let i = 0; i < currentBoard.length; i++) {
       if (checkLine(currentBoard[i])) {
@@ -101,9 +98,9 @@ function GameController(){
   function playRound(cell){
 
     const currentBoard = board.getBoard()
-    const hasWinner = evaluateWinCondition(currentBoard);
+    const hasWinner = checkWin(currentBoard);
     const hasDraw = checkTie(currentBoard);
-
+    
     if (hasWinner) {
       console.log(`The winner is ${activePlayer.name}`);
       return
@@ -112,14 +109,14 @@ function GameController(){
       console.log('The game is a Tie');
       return
     }
-
+    
     console.log(`Turn: ${round + 1}`)
     console.log(`Current player: ${activePlayer.name}`)
     board.printBoard();
     
     if (cell) {
       const {row, column} = cell
-
+      
       const playerSelection = {
         value: activePlayer.token,
         row: row,
@@ -128,8 +125,18 @@ function GameController(){
       
       board.dropToken(playerSelection);
 
-            
-      toggleTurnPlayer();
+      const newBoard = board.getBoard();
+      const newHasWinner = checkWin(newBoard);
+      const newHasTie = checkTie(newBoard)
+
+      if (newHasWinner) {
+        console.log(`El ganador es ${activePlayer.name}`);
+        return;
+      } else if (newHasTie) {
+        console.log('The game is a Tie');
+        return
+      }
+      toggleTurnPlayer()
     }
   }
   return {playRound, getActivePlayer, getBoard: board.getBoard }
@@ -143,15 +150,14 @@ function ScreenController () {
   const game = GameController()
 
   function handleCellClick (e) {
-    const row = e.target.dataset.row;
-    const column = e.target.dataset.column;
 
     const selectedCell = {
-      row: parseInt(row),
-      column: parseInt(column),
+      row: e.target.dataset.row,
+      column: e.target.dataset.column,
     };
 
     game.playRound(selectedCell)
+    renderBoard()
   }
 
   function renderBoard() {
@@ -168,12 +174,11 @@ function ScreenController () {
         cellButton.dataset.column = columnIndex;
         cellButton.textContent = cell;
         
-
-        boardContainer.appendChild(cellButton);
         cellButton.addEventListener('click', handleCellClick);
+        boardContainer.appendChild(cellButton);
       });
     });
   }
-  renderBoard()
+  renderBoard();
 }
 ScreenController()
