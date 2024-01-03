@@ -192,7 +192,8 @@ function ScreenController () {
         cellButton.classList.add('cell');
         cellButton.dataset.row = rowIndex;
         cellButton.dataset.column = columnIndex;
-        cellButton.textContent = cell;
+
+        cellButton.textContent = cell === 0? '' : cell
         
         cellButton.addEventListener('click', handleCellClick);
         boardContainer.appendChild(cellButton);
