@@ -5,12 +5,16 @@ function GameBoard (){
   const columns = 3;
   const board = [];
 
-  for (let i = 0; i < rows; i++) {
-    board[i] = [];
-    for (let j = 0; j < columns; j++) {
-      board[i].push(cell.getValue());
+  const initialBoard = function (){
+    for (let i = 0; i < rows; i++) {
+      board[i] = [];
+      for (let j = 0; j < columns; j++) {
+        board[i].push(cell.getValue());
+      }
     }
-  }
+  };
+  initialBoard()
+  
   const getBoard = () => board;
 
   const dropToken = (player) => {
@@ -26,7 +30,7 @@ function GameBoard (){
   
   const printBoard = () => console.log(getBoard())
 
-  return {getBoard, dropToken, printBoard}
+  return {getBoard, dropToken, printBoard, initialBoard}
 };
 
 
@@ -93,11 +97,20 @@ function GameController(){
     return false
   }
 
+  function newGame() {
+    board.initialBoard();
+  
+    return {
+      round: 0,
+      activePlayer: players[0],
+    };
+  }
+
 
   let round = 0;
   function playRound(cell){
 
-    const currentBoard = board.getBoard()
+    let currentBoard = board.getBoard()
     const hasWinner = checkWin(currentBoard);
     const hasDraw = checkTie(currentBoard);
     
@@ -130,7 +143,7 @@ function GameController(){
       const newHasTie = checkTie(newBoard)
 
       if (newHasWinner) {
-        console.log(`El ganador es ${activePlayer.name}`);
+        console.log(`The winner is ${activePlayer.name}`);
         return;
       } else if (newHasTie) {
         console.log('The game is a Tie');
@@ -139,15 +152,22 @@ function GameController(){
       toggleTurnPlayer()
     }
   }
-  return {playRound, getActivePlayer, getBoard: board.getBoard }
+  return {playRound, getActivePlayer, getBoard: board.getBoard, newGame }
 }
 
 function ScreenController () {
   const boardContainer = document.getElementById('game-container');
-  const startBtn = document.getElementById('new-game');
+  const newGame = document.getElementById('new-game-btn');
   const player1Score = document.getElementById('player1-score');
   const player2Score = document.getElementById('player2-score');
   const game = GameController()
+
+  newGame.addEventListener('click', startNewGame)
+
+  function startNewGame () {
+    game.newGame()
+    renderBoard()
+  }
 
   function handleCellClick (e) {
 
